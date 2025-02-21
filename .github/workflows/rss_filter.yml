@@ -26,10 +26,11 @@ jobs:
       - name: Run filtering script
         run: python filter_rss.py
 
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add docs/filtered_feed.xml
-          git commit -m "[GitHub Actions] Updated filtered RSS feed" || echo "No changes to commit"
-          git push
+- name: Commit and push changes
+  run: |
+    git config --global user.name "github-actions"
+    git config --global user.email "actions@github.com"
+    git pull --rebase origin main
+    git add docs/filtered_feed.xml
+    git commit -m "[GitHub Actions] Updated filtered RSS feed" --allow-empty || echo "No changes to commit"
+    git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
