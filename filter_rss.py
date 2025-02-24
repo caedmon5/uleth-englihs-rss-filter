@@ -5,8 +5,9 @@ import re
 
 # Define the RSS feed URL
 RSS_URL = "https://www.uleth.ca/notice/rss/all"
-DEPARTMENT_ID = "344"  # Change this to the department code you need
+DEPARTMENT_ID = "344"
 DEPARTMENT_FILTER_PATTERN = f"/notice/filter/{DEPARTMENT_ID}"
+NOTICE_URL_PATTERN = "https://www.ulethbridge.ca/notice/notices/"
 
 # Parse the RSS feed
 feed = feedparser.parse(RSS_URL)
@@ -22,9 +23,9 @@ def extract_image(description):
     match = re.search(r'<img.*?src="(.*?)"', description)
     return match.group(1) if match else None
 
-# Filter entries where department ID appears in the description
+# Filter entries where department ID appears in the description AND it's a notice (not an event)
 for entry in feed.entries:
-    if DEPARTMENT_FILTER_PATTERN in entry.description:
+    if DEPARTMENT_FILTER_PATTERN in entry.description and entry.link.startswith(NOTICE_URL_PATTERN):
         fe = fg.add_entry()
         fe.title(entry.title)
         fe.link(href=entry.link)
